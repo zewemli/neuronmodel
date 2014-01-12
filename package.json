@@ -1,0 +1,14 @@
+{ 
+     "name": "neuronmodel"
+    ,"version": "0.1.0"
+    , "author": { "name" : "Zachary Wemlinger"
+            , "email" : "me@zacharywemlinger.com"
+            , "url" : "http://www.zacharywemlinger.com/"
+    }
+    , "license" : "MIT"
+    ,"repository" :
+      { "type" : "git"
+	, "url" : "https://github.com/zewemli/neuronmodel.git"
+    }
+    ,"main": "neuron.js"
+}

@@ -1,4 +1,6 @@
-neuronmodel
+NeuronModel
 ===========
+This is an implementation of a spiking neuron model described in:
+> Izhikevich, Eugene M. "Simple model of spiking neurons." Neural Networks, IEEE Transactions on 14.6 (2003): 1569-1572.
 
-Simple model of a spiking neuron using javascript
+Sound interesting? Use the Source Luke!

@@ -1,0 +1,136 @@
+<html>
+    
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="./neuron.js" charset="utf-8"></script>
+        <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+            *{
+               font-family: 'Oxygen', sans-serif;
+            }
+            #neuron_params{
+                width: 100%;
+                margin:0px;
+                padding: 0px;
+            }
+            #neuron_params h3{
+                height: 25px;
+                line-height: 25px;
+                margin:0px;
+                padding: 0px;
+                font-size: 20px;
+            }
+            #neuron_params li{
+                display: block;
+                margin-top: 10px;
+                height: 250px;
+                width: 100%;
+            }
+            
+            svg{
+                display:block;
+                height: 250px;
+                width: 100%;
+            }
+            
+            path.line {
+              fill: none;
+              stroke: #666;
+              stroke-width: 1.5px;
+            }
+            
+            line.sep{
+              stroke: #666;
+              stroke-width: 1.5px;
+            }
+            
+            .axis {
+              shape-rendering: crispEdges;
+            }
+            
+            .x.axis .minor {
+              stroke-opacity: .5;
+            }
+            
+            .x.axis line{
+                display:none;
+            }
+            
+            .y.axis line, .y.axis path, .x.axis path {
+              fill: none;
+              stroke: #ccc;
+            }
+        </style>
+    
+        
+    </head>
+    
+    <body>
+        <h1>Simple model of spiking neurons</h1>
+        <div>
+            <span>This is a javascript implementation of a simple spiking neuron model described in:</span>
+            <blockquote>Izhikevich, Eugene M. "Simple model of spiking neurons." Neural Networks, IEEE Transactions on 14.6 (2003): 1569-1572.</blockquote>
+            
+            <ul id="neuron_params">
+                
+            </ul>
+        </div>
+    </body>
+    
+    <script type="text/javascript">
+        var start=new Date();
+        var margin = 35;
+        var names = ["FS", "RZ", "LTS", "TC", "RS", "IB", "CH"];
+        var inputs = [];
+        var models = names.map(function(name){ return new Neuron(name); });
+        var list = d3.select("#neuron_params").selectAll("li").data(models);
+        
+        for(var i=0; i < 12; i++){ inputs.push(0); }
+        for(var i=0; i < 1000; i++){ inputs.push(10); }
+        for(var i=0; i < 12; i++){ inputs.push(0); }
+        
+        var listModels = list.enter()
+            .append("li")
+            .attr("class", function(d,i){ return names[i]; });
+        
+        listModels.append("h3").text(function(d,i){ return names[i]; });
+        
+        listModels.append("svg")
+            .each(function(m){
+                
+                var $this = $(this);
+                
+                var height = $this.height() - $this.siblings("h3").height();
+                var width = $this.width();
+                d3.select(this).attr({"height": height, "width": width});
+        
+                var x = d3.scale.linear().range([margin, width]).domain([0, inputs.length-1]);
+                var y = d3.scale.linear().range([height - margin, margin]);
+                
+                var xAxis = d3.svg.axis().scale(x).tickSize(-height).tickSubdivide(true).orient("top");
+                var yAxis = d3.svg.axis().scale(y).ticks(4).orient("left");
+                
+                var data = inputs.map(function(d,i){ return m.tick(d); });
+                y.domain( d3.extent( data ) );
+                
+                var line = d3.svg.line()
+                                .x(function(d, i) { return x(i); })
+                                .y(function(d) { return y(d); });
+                
+                var d3me = d3.select(this);
+                d3me.append("g").attr("class","x axis").call(xAxis).attr("transform", "translate(0," + (margin) + ")");
+                d3me.append("g").attr("class","y axis").call(yAxis).attr("transform", "translate("+ margin +",0)");
+                d3me.append("path").attr({"class": "line", "d": line(data)});
+                d3me.append("line").attr({
+                    "class": "sep",
+                    "x1": margin, "x2": width,
+                    "y1": y.range()[0], "y2": y.range()[0]
+                });
+                 
+            });
+        
+        console.log("Done in", new Date() - start, "ms");
+    </script>
+    
+</html>
